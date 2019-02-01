@@ -272,7 +272,9 @@ class SeminarService extends AccessControlledService
                         foreach ($date['lecturers'] as $user) {
                             $entry = KuferMapping::find($user['id']);
                             $user_id = $entry->studip_id;
-                            $termin->relatedPerson($user_id);
+                            if ($user_id){
+                                $termin->addRelatedPerson($user_id);
+                            }
                         }
                     }
 
@@ -358,7 +360,7 @@ class SeminarService extends AccessControlledService
 
                 foreach ($members as $id => $user) {
                     if (!isset($new_members[$id])) {
-                        $sem->deleteMember($id);
+                        $sem->deleteMember($id); //händisch eingetragene Nutzer würden immer rausfliegen
                     }
                 }
 
@@ -413,7 +415,7 @@ class SeminarService extends AccessControlledService
 
                         foreach ($new_members as $id => $user) {
                             if (!isset($members[$id])) {
-                                $termin->RelatedPerson($id);
+                                $termin->addRelatedPerson($id);
                             }
                         }
                         
@@ -505,7 +507,10 @@ class SeminarService extends AccessControlledService
         $seminar_id = $entry->studip_id;
         if(!$seminar_id){ 
          return new Studip_Ws_Fault('Seminar_id not found!');
+        } else if (!Course::find($seminar_id)){
+            return new Studip_Ws_Fault('Seminar not found!');
         }
+
 
         
         try {

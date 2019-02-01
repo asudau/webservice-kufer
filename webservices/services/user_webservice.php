@@ -285,6 +285,7 @@ class UserService extends AccessControlledService {
                 $entry = new KuferMapping();
                 $entry->studip_id = $studip_user->id;
                 $entry->claimed = time();
+                $entry->kufer_username = $user->user_name;
                 $entry->mkdate = time();
                 $entry->store();
            }

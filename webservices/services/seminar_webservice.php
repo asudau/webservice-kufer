@@ -541,6 +541,18 @@ class SeminarService extends AccessControlledService
             
             $user_id = $entry->studip_id;
             
+            $studip_user_status = User::find($user_id)->perms;
+//            $db = DBManager::get();
+//            $stmt = $db->prepare('SELECT perms FROM auth_user_md5 WHERE user_id = ?');
+//            $stmt->execute(array($user_id));
+//            $studip_user_status = $stmt->fetchColumn();
+            
+            if($status == 'dozent' && in_array($studip_user_status, words('autor user tutor'))){
+                $tmp_user = User::find($user_id);
+                $tmp_user->perms = 'dozent';
+                $tmp_user->store();
+            }
+            
             $query = "INSERT INTO seminar_user (Seminar_id, user_id, status, position, gruppe, visible, mkdate)
                       VALUES (?, ?, ?, ?, ?, ?, UNIX_TIMESTAMP())";
             $statement = DBManager::get()->prepare($query);
